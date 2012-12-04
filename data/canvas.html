@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <body>
+    <canvas></canvas>
+    <script src="qrcode.js"></script>
+    <script type="text/javascript;version=1.8">
+      let dotsize = 5;  // size of box drawn on canvas
+      let padding = 10; // (white area around your QRCode)
+      let black = "rgb(0,0,0)";
+      let white = "rgb(255,255,255)";
+      let QRCodeVersion = 4;
+
+      let canvas = document.querySelector("canvas");
+
+      let context = canvas.getContext("2d");
+
+      addon.port.on("qrcode", function (data) {
+        let qr = null;
+        try {
+          qr = new QRCode(QRCodeVersion, QRErrorCorrectLevel.L);
+          qr.addData(data);
+          qr.make();
+        }
+        catch (error) {
+          addon.port.emit("error", error.message);
+          console.error(error.message);
+          return;
+        }
+
+        let qrsize = qr.getModuleCount();
+        canvas.setAttribute("height",(qrsize * dotsize) + padding);
+        canvas.setAttribute("width",(qrsize * dotsize) + padding);
+
+        let shiftForPadding = padding >> 1;
+
+        for (var r = 0; r < qrsize; r++) {
+          for (var c = 0; c < qrsize; c++) {
+            if (qr.isDark(r, c))
+              context.fillStyle = black;
+            else
+              context.fillStyle = white;
+            context.fillRect ((c * dotsize) + shiftForPadding, (r * dotsize) + shiftForPadding, dotsize, dotsize);
+          }
+        }
+
+        addon.port.emit("qrcode", canvas.toDataURL("image/png"));
+      });
+
+    </script>
+  </body>
+</html>

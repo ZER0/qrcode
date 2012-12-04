@@ -1,0 +1,9 @@
+{
+    "name": "qrcode",
+    "license": "MPL 2.0",
+    "author": "ZER0",
+    "version": "0.1",
+    "fullName": "qrcode",
+    "id": "qrcode",
+    "description": "aAn add-on to generate qrcode from URL and maps"
+}
